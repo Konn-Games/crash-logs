@@ -14,13 +14,6 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v3      
 
-      - name: Building .env file
-        run : |
-          echo SERVER=${{ secrets.SERVER }} > .env
-          echo RECIPIENT=${{ secrets.RECIPIENT }} >> .env
-          echo API_KEY=${{ secrets.API_KEY }} >> .env
-          echo USERNAME=${{ secrets.USERNAME }} >> .env
-
       - name: Docker Login
         run : |
           echo ${{ secrets.GH_TOKEN }} | docker login ghcr.io -u Konn-Games --password-stdin 
