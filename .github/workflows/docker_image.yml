@@ -1,0 +1,38 @@
+on:                       
+  push:                   
+    branches:             
+      - main              
+ 
+env:
+  NAME: ${{ github.event.repository.name }}
+
+jobs:
+  build-and-push:         
+    runs-on: ubuntu-24.04-arm
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3      
+
+      - name: Building .env file
+        run : |
+          echo SERVER=${{ secrets.SERVER }} > .env
+          echo RECIPIENT=${{ secrets.RECIPIENT }} >> .env
+          echo API_KEY=${{ secrets.API_KEY }} >> .env
+          echo USERNAME=${{ secrets.USERNAME }} >> .env
+
+      - name: Docker Login
+        run : |
+          echo ${{ secrets.GH_TOKEN }} | docker login ghcr.io -u Konn-Games --password-stdin 
+
+      - name: Build Docker image
+        run: |
+          docker build --platform linux/arm64 -t ${NAME,,} .
+
+      - name: Tag Docker Image
+        run: |
+          docker tag ${NAME,,}:latest ghcr.io/konn-games/${NAME,,}:latest
+          
+      - name: Push Docker image          
+        run: |
+          docker push ghcr.io/konn-games/${NAME,,}:latest
