@@ -23,4 +23,4 @@ def send_crash_log():
     return ""
 
 if __name__ == "__main__":
-    app.run(host='0.0.0.0')
+    app.run()
