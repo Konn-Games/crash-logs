@@ -13,9 +13,13 @@ mail = Mail(app)
 
 @app.route("/crash", methods = ['POST'] )
 def send_crash_log():
-    msg = Message('crash log', sender = os.getenv("USERNAME"), recipients = [os.getenv("RECIPIENT")])
-    msg.body = request.get_data()
-    mail.send(msg)
+    log = request.get_data()
+    if not (b"Error" in log and b"Traceback" in log):
+        return "Corrupt data", 401
+    mail.send(Message('crash log',
+        body = log,
+        sender = os.getenv("USERNAME"),
+        recipients = [os.getenv("RECIPIENT")]))
     return ""
 
 if __name__ == "__main__":
